@@ -12,6 +12,11 @@ import java.util.Set;
 import cn.hhj.dao.IDeptDAO;
 import cn.hhj.vo.Dept;
 
+/**
+ * dev分支修改的内容
+ * @author Administrator
+ *
+ */
 public class DeptDAOImpl implements IDeptDAO {
 	private Connection conn;
 	private PreparedStatement pstmt;
