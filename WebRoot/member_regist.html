@@ -1,0 +1,155 @@
+<html>
+<head>
+<title>Ajax数据交互</title>
+<meta charset="UTF-8">
+<script type="text/javascript">
+	var checkCodeFlag=false;
+	var checkMidFlag=false;
+	var xmlHttpRequest; //定义变量，用于保存XMLHttpRequest对象
+	window.onload = function() {
+		document.getElementById("mid").addEventListener("blur", function(e) {validateMid();}, false);
+		document.getElementById("password").addEventListener("blur", function(e) {validatePassword();}, false);
+		document.getElementById("conf").addEventListener("blur", function(e) {validateConf();}, false);
+		document.getElementById("code").addEventListener("blur", function(e) {validateCode();}, false);
+		document.getElementById("codeImage").addEventListener("click", function(e) {reloadCode();}, false);
+		document.getElementById("myForm").addEventListener("submit", function(e) {
+			if(validateFrom()){
+				this.submit();
+			}else{
+				if(e && e.preventDefault()){
+						e.preventDefault();
+					}else{
+						window.event().returnValue=false;
+					}
+			}
+		}, false);
+	}
+	function create() { //编写一个单独的函数用于创建XMLHttpRequest对象
+		if (window.XMLHttpRequest) {//判断浏览器是否支持XMLHttpRequest
+			xmlHttpRequest = new XMLHttpRequest();
+		}else{
+			xmlHttpRequest=new ActiveXObject("Misrosoft.XMLHttp");
+		}
+	}
+	
+	 function reloadCode(){
+	 	var imgEle=document.getElementById("codeImage");
+	 	imgEle.src="ImageCodeServlet?+random"+Math.random();
+	 }
+	
+	function validateMid(){
+		var mid=document.getElementById("mid").value;
+		spanObj=document.getElementById("midSpan");
+		if(mid==""){
+			spanObj.innerHTML="<font color='red'>用户名不允许为空</font>";
+			return false;
+		}else{
+		create();
+		//设置请求的类型以及接受的位置和参数内容
+		xmlHttpRequest.open("post","MemberServlet/checkMid?mid="+mid);	
+		xmlHttpRequest.send(null);//发送请求
+		//针对于服务器的请求来回应，需要设置回调参数
+		xmlHttpRequest.onreadystatechange=function(){
+			if(xmlHttpRequest.readyState==4){
+				if(xmlHttpRequest.status==200){
+					if(xmlHttpRequest.responseText=="true"){
+						spanObj.innerHTML="<font color='green'>用户名可以使用!!</font>";
+						checkMidFlag=true;
+					}else{
+						spanObj.innerHTML="<font color='red'>用户名已存在!!</font>";
+						reloadCode();
+						checkMidFlag=false;
+					}
+				}else{
+					spanObj.innerHTML="<font color='red'>该用户名无法使用!!</font>";
+				}
+			}
+		}
+		}
+		return checkMidFlag;
+	}
+	function validatePassword(){
+		var password=document.getElementById("password").value;
+		spanObj=document.getElementById("passwordSpan");
+		if(password==""){
+			spanObj.innerHTML="<font color='red'>密码不允许为空</font>";
+			return false;
+		}else{
+			spanObj.innerHTML="<font color='green'>密码正确</font>";
+			return true;
+		}
+		return false;
+	}
+	function validateConf(){
+		var password=document.getElementById("password").value;
+		var conf=document.getElementById("conf").value;
+		spanObj=document.getElementById("confSpan");
+		if(conf!=""){
+			if(conf!=password){
+				spanObj.innerHTML="<font color='red'>密码不一致</font>";
+				return false;
+			}else{
+				spanObj.innerHTML="<font color='green'>密码输入正确</font>";
+				return true;
+			}
+		}
+		return false;
+	}
+	function validateCode(){
+		var code=document.getElementById("code").value;
+		spanObj=document.getElementById("codeSpan");
+		if(code==""){
+			spanObj.innerHTML="<font color='red'>验证码不允许为空</font>";
+			return false;
+		}else{
+			create();
+			xmlHttpRequest.open("post","/AjaxProject/CheckRandomServlet?code="+code);	
+			xmlHttpRequest.send(null);
+			xmlHttpRequest.onreadystatechange=function(){
+				if(xmlHttpRequest.readyState==4){
+					if(xmlHttpRequest.status==200){
+						if(xmlHttpRequest.responseText=='true'){
+							spanObj.innerHTML="<font color='green'>验证码正确</font>";
+							checkCodeFlag=true;
+						}else{
+							spanObj.innerHTML="<font color='red'>验证码错误</font>";
+							checkCodeFlag=false;
+							reloadCode();
+						}
+					}else{
+						spanObj.innerHTML="<font color='red'>验证码出错</font>";
+						checkCodeFlag=false;
+						reloadCode();
+					}
+				}
+			}
+		}
+		return checkCodeFlag;
+	}
+	function validateFrom(){
+		return validateMid()&validatePassword()&validateConf()&checkMidFlag;
+	}	
+	function xx(){
+		create();
+		//设置请求的类型以及接受的位置和参数内容
+		xmlHttpRequest.open("post","EchoServlet?msg="+info);	
+		xmlHttpRequest.send(null);//发送请求
+		//针对于服务器的请求来回应，需要设置回调参数
+		xmlHttpRequest.onreadystatechange=function(){
+		}
+	}
+</script>
+</head>	
+<body>
+	<div id="noteDiv">
+		<form action="MemberServlet/regist" method="post" id="myForm">
+			用户名：<input type="text" name="mid" id="mid"> <span id="midSpan"></span> <br>
+			输入密码：<input type="password" name="password" id="password"> <span id="passwordSpan"></span> <br>
+			确认密码：<input type="password" name="conf" id="conf"> <span id="confSpan"></span> <br>
+			验证码：<input type="text" name="code" id="code"> <img src="/AjaxProject/ImageCodeServlet" id="codeImage"/><span id="codeSpan"></span> <br>
+			<input type="submit" value="提交">
+			<input type="reset" value="重置"> 
+		</form>
+	</div>
+</body>
+</html>

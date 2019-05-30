@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Ajax数据交互</title>
+<meta charset="UTF-8">
+<script type="text/javascript">
+	var xmlHttpRequest; //定义变量，用于保存XMLHttpRequest对象
+	window.onload = function() {
+		document.getElementById("loadBut").addEventListener("click", function(e) {
+			loadXMLData();
+		}, false);
+	}
+	function create() { //编写一个单独的函数用于创建XMLHttpRequest对象
+		if (window.XMLHttpRequest) { //判断浏览器是否支持XMLHttpRequest
+			xmlHttpRequest = new XMLHttpRequest();
+		} else {
+			xmlHttpRequest = new ActiveXObject("Misrosoft.XMLHttp");
+		}
+	}
+	function loadXMLData() {
+		create();
+		xmlHttpRequest.open("post", "show.xml");
+		xmlHttpRequest.send(null);
+		xmlHttpRequest.onreadystatechange = function() {
+			if (xmlHttpRequest.readyState == 4) {
+				if (xmlHttpRequest.status == 200) {
+					var showEle = xmlHttpRequest.responseXML;
+					var schoolEle = showEle.getElementsByTagName("school");
+					for (var x = 0; x < schoolEle.length; x++) {
+						var id = schoolEle[x].getAttribute("id"); //取得ID内容
+						var nameEle = schoolEle[x].getElementsByTagName("name")[0].firstChild.nodeValue;
+						var addrEle = schoolEle[x].getElementsByTagName("addr")[0].firstChild.nodeValue;
+						addRow(id, nameEle, addrEle);
+					}
+				}
+			}
+		}
+	}
+	function addRow(id, name, addr) {
+		var tableEle = document.getElementById("showTable");
+		var trEle = document.createElement("tr");
+		var idTdEle = document.createElement("td");
+		idTdEle.appendChild(document.createTextNode(id));
+		var nameEle = document.createElement("td");
+		nameEle.appendChild(document.createTextNode(name));
+		var addrEle = document.createElement("td");
+		addrEle.appendChild(document.createTextNode(addr));
+		trEle.appendChild(idTdEle);
+		trEle.appendChild(nameEle);
+		trEle.appendChild(addrEle);
+		tableEle.appendChild(trEle);
+	}
+
+</script>
+</head>
+<body>
+	<div id="noteDiv">
+		<input type="button" value="Read" id="loadBut">
+	</div>
+	<div>
+		<table border="1" id="showTable">
+			<tr>
+				<td>id</td>
+				<td>姓名</td>
+				<td>地址</td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

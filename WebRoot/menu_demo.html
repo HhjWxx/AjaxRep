@@ -1,0 +1,87 @@
+<html>
+<head>
+<title>Ajax数据交互</title>
+<meta charset="UTF-8">
+<script type="text/javascript">
+	window.onload = function() {
+		loadMenua();
+		document.getElementById("menua").addEventListener("change", function() {
+			if (this.value == "0") {
+				document.getElementById("menub").length = 1;
+				document.getElementById("menuc").length = 1;
+			} else {
+				loadSubMenu("menub", this.value);
+			}
+		}, false);
+		document.getElementById("menub").addEventListener("change", function() {
+			if (this.value == "0") {
+				document.getElementById("menuc").length = 1;
+			} else {
+				loadSubMenu("menuc", this.value);
+			}
+		}, false);
+	}
+	var xmlHttpRequest;
+	function createXmlHttpRequest() {
+		if (window.XMLHttpRequest) { //判断浏览器是否支持XMLHttpRequest
+			xmlHttpRequest = new XMLHttpRequest();
+		} else {
+			xmlHttpRequest = new ActiveXObject("Misrosoft.XMLHttp");
+		}
+	}
+	function loadMenua() {
+		createXmlHttpRequest();
+		xmlHttpRequest.open("post", "MenuServlet/list");
+		xmlHttpRequest.send(null);
+		xmlHttpRequest.onreadystatechange = function() {
+			if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
+				var midList = xmlHttpRequest.responseXML.getElementsByTagName("mid");
+				var titleList = xmlHttpRequest.responseXML.getElementsByTagName("title");
+				addOption("menua", midList, titleList);
+			}
+		}
+	}
+	function addOption(ele, midList, titleList) {
+		var selectObj = document.getElementById(ele);
+		selectObj.length = 1;
+		for (var x = 0; x < midList.length; x++) {
+			var optionEle = document.createElement("option");
+			optionEle.setAttribute("value", midList[x].firstChild.nodeValue);
+			optionEle.appendChild(document.createTextNode(titleList[x].firstChild.nodeValue));
+			selectObj.appendChild(optionEle);
+		}
+	}
+
+	function loadSubMenu(ele, fmid) {
+		createXmlHttpRequest();
+		xmlHttpRequest.open("post", "MenuServlet/listSub?mid=" + fmid);
+		xmlHttpRequest.send(null);
+		xmlHttpRequest.onreadystatechange = function() {
+			if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
+				var midList = xmlHttpRequest.responseXML.getElementsByTagName("mid");
+				var titleList = xmlHttpRequest.responseXML.getElementsByTagName("title");
+				addOption(ele, midList, titleList);
+			}
+		}
+	}
+</script>
+</head>
+<body>
+	<div id="noteDiv">
+		<table>
+			<tr>
+				<td><select id="menua" name="menua">
+						<option value="0">===请选择分类===</option>
+				</select></td>
+				<td><select id="menub" name="menub">
+						<option value="1">===请选择子分类===</option>
+				</select>
+				<td><select id="menuc" name="menuc">
+						<option value="2">===请选择子分类===</option>
+				</select></td>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

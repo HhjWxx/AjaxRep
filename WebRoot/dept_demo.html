@@ -1,0 +1,36 @@
+<html>
+<head>
+<title>Ajax数据交互</title>
+<meta charset="UTF-8">
+<script type="text/javascript" src="js/dept.js">
+	
+</script>
+</head>	
+<body>
+	<div style="display: block;" id="addDiv">
+		部门名称:<input type="text" name="dname-add" id="dname-add">
+		部门位置:<input type="text" name="loc-add" id="loc-add">
+			  <input type="button" value="add" id="addBtn"> 
+	</div>
+	
+	<div style="display: none;" id="editDiv">
+		部门名称:<input type="text" name="dname-edit" id="dname-edit">
+		部门位置:<input type="text" name="loc-edit" id="loc-edit">
+			  <input type="button" value="update" id="editBtn"> 
+			   <input type="button" value="back" id="editCancelBtn"> 
+	</div>
+	
+	<div id="noteDiv">
+		<table border="1" width="100%" id="deptTable">
+			<tr id="deptTitle">
+				<td id="sa-title"><input type="checkbox" id="selectAll">  </td>
+				<td id="did-title">部门编号</td>
+				<td id="dname-title">部门名称</td>
+				<td id="loc-title">部门位置</td>
+				<td id="opt-title">操作</td>
+			</tr>
+		</table>
+		<input type="button" value="删除" id="deleteAll">
+	</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>Ajax数据交互</title>
+<meta charset="UTF-8">
+<script type="text/javascript">
+	var xmlHttpRequest; //定义变量，用于保存XMLHttpRequest对象
+	var count=10;
+	window.onload = function() {
+		loadXMLData("www.hhj.com");
+	}
+	function create() { //编写一个单独的函数用于创建XMLHttpRequest对象
+		if (window.XMLHttpRequest) { //判断浏览器是否支持XMLHttpRequest
+			xmlHttpRequest = new XMLHttpRequest();
+		} else {
+			xmlHttpRequest = new ActiveXObject("Misrosoft.XMLHttp");
+		}
+	}
+	function loadXMLData(info) {
+		create();
+		xmlHttpRequest.open("post", "ReverseServlet?msg="+info);
+		xmlHttpRequest.send(null);
+		xmlHttpRequest.onreadystatechange = function() {
+			if (xmlHttpRequest.readyState == 4) {
+				if (xmlHttpRequest.status == 200) {
+					if(count>0){
+					document.getElementById("noteDiv").innerHTML+="<p>"+xmlHttpRequest.responseText+"</p>";
+					window.setTimeout(function() {
+						loadXMLData("轮询次数："+count);
+					}, 2000);
+					count--;
+					}
+				}
+			}
+		}
+	}
+
+</script>
+</head>
+<body>
+	<div id="noteDiv">
+		
+	</div>
+</body>
+</html>
