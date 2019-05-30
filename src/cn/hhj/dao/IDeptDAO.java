@@ -12,5 +12,6 @@ public interface IDeptDAO {
 	public Integer findLastId()throws SQLException;
 	public Dept findById(Integer did)throws SQLException;
 	public boolean doUpdate(Dept vo)throws SQLException;
+	//批量移动
 	public boolean doMoveBatch(Set<Integer> ids)throws SQLException;
 }
